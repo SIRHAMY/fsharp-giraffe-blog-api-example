@@ -1,8 +1,11 @@
 module Blog 
 
+open System
+open System.Threading.Tasks
 open Microsoft.AspNetCore.Http
 open Giraffe
 
+[<CLIMutable>]
 type BlogPost = {
     title: string
     content: string
@@ -26,7 +29,10 @@ let getPostsHttpHandler (serviceTree: BlogServiceTree) =
     fun (next : HttpFunc) (ctx : HttpContext) ->
         json (serviceTree.getBlogDb().GetAllPosts()) next ctx
 
-let createPostHttpHandler (serviceTree: BlogServiceTree) (newPost : BlogPost) =
+let createPostHttpHandler (serviceTree: BlogServiceTree) =
     fun (next : HttpFunc) (ctx : HttpContext) ->
-        serviceTree.getBlogDb().AddPost(newPost) |> ignore
-        json (newPost) next ctx
+        task {
+            let! newPostJson = ctx.BindJsonAsync<BlogPost>()
+            serviceTree.getBlogDb().AddPost(newPostJson) |> ignore
+            return! json (newPostJson) next ctx
+        }

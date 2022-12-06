@@ -24,11 +24,7 @@ let webApp =
                 route "/create" 
                     >=> POST 
                     >=> warbler (fun _ -> 
-                        let newPost : BlogPost = {
-                            title = Guid.NewGuid().ToString()
-                            content = "lorem ipsum"
-                        }
-                        (createPostHttpHandler serviceTree newPost))
+                        (createPostHttpHandler serviceTree))
             ])
     ]
 
