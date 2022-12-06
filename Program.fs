@@ -9,8 +9,11 @@ open Giraffe
 
 let webApp = 
     choose[
-        route "/posts" >=> text "AllPosts"
-        route "/posts/create" >=> text "Not created"
+        subRoute "/posts" 
+            (choose [
+                route "" >=> GET >=> text "AllPosts"
+                route "/create" >=> POST >=> text "CreatePosts"
+            ])
     ]
 
 let configureApp (app : IApplicationBuilder) =
