@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Blog.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

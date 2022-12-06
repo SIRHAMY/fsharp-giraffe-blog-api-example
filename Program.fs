@@ -5,14 +5,30 @@ open Microsoft.Extensions.Hosting
 open Microsoft.Extensions.Logging
 open Microsoft.Extensions.DependencyInjection
 
+open Blog
 open Giraffe
 
 let webApp = 
+    let blogDb = new BlogDb()
+
+    let serviceTree = {
+        getBlogDb = fun() -> blogDb
+    }
+
     choose[
+        route "/" >=> text "iamanapi"
         subRoute "/posts" 
             (choose [
-                route "" >=> GET >=> text "AllPosts"
-                route "/create" >=> POST >=> text "CreatePosts"
+                route "" >=> GET >=> warbler (fun _ -> 
+                    (getPostsHttpHandler serviceTree))
+                route "/create" 
+                    >=> POST 
+                    >=> warbler (fun _ -> 
+                        let newPost : BlogPost = {
+                            title = Guid.NewGuid().ToString()
+                            content = "lorem ipsum"
+                        }
+                        (createPostHttpHandler serviceTree newPost))
             ])
     ]
 
