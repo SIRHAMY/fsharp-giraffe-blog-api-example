@@ -8,6 +8,8 @@ open Microsoft.Extensions.DependencyInjection
 open Blog
 open Giraffe
 
+(* Web App Configuration *)
+
 let webApp = 
     let blogDb = new BlogDb()
 
@@ -27,6 +29,8 @@ let webApp =
                         (createPostHttpHandler serviceTree))
             ])
     ]
+
+(* Infrastructure Configuration *)
 
 let configureApp (app : IApplicationBuilder) =
     app.UseGiraffe (webApp)
